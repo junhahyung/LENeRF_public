@@ -1,0 +1,90 @@
+experiment:
+    debug: False
+    random_seeds: 304
+    trainer: EG3DMaskEditTrainer
+    exp_name: eg3d_ffhq_clipedit_lipstick
+    log_dir: "%>> /project/dataset/users/liam.1234/localnerf_logs/logs/%(experiment.exp_name)s"
+    generated_dir: "evaluation/generated"
+    resume_folder: ""
+
+    sample_interval: 30
+    model_save_interval: 300
+
+wandb:
+    entity: 'lenerf'
+    wandb_run_name: 'default'
+
+
+model:
+    generator:
+        model_type: ffhq512-128
+        
+        ## Mixing options
+        mix_layers: 'first' # 'first' 'last' 'both'
+        texture_only: True
+
+    masknet:
+        masknet_type: "default"
+        use_enlarged_mask: False
+        use_coor_input: True
+        class_name: "training.clipedit.masknet.Mask_mlp"
+        hidden_dim: 256
+        #thres: 0.                                               # Masknet threshold during eval mode (mask = mask > thres)
+    mapper:
+        ## VanillaMapper
+        #===============#
+        #class_name: "training.clipedit.mapper.VanillaMapper"
+        #num_layers: 4
+        #hidden_dim: 512
+        #===============#
+
+        ## StyleCLIP LevelsMapper
+        #===============#
+        class_name: "training.clipedit.mapper.LevelsMapper"
+        num_layers: 4
+        no_coarse_mapper: True
+        no_medium_mapper: False
+        no_fine_mapper: False
+        #===============#
+
+dataset:
+    class_name: "training.dataset.LabelOnlyDataset"
+    path: "/project/dataset/users/liam.1234/lenerf/dataset.json"
+lambda:
+    masknet_cliploss_lambda: 0.
+    cliploss_lambda: 0.2
+
+    mask2dreg: 0.3
+    mask2d_minmax_reg: 0.1
+    mask2d_tv_reg: 1
+    mask2d_topk: 80
+    mask2d_botk: 100
+
+    lpips_lambda: 0.            # turn off for debugging
+    mask_lambda: 0.5
+    ws_delta_lambda: 1
+    ws_reg_lambda: 0.0002
+    arcface_lambda: 0.0001         
+    delta_arcface_lambda: 0.0001
+    clip_augmentation_num: 4    # how many times to augment?
+    sim_scale: 1                # following styleclip. 근데 맞나??
+
+    use_masked_cliploss: False
+
+training:
+    max_step: 50000
+    batch_size: 4
+    multiview_num: 4
+    n_workers: 16
+    lr: 0.003
+    betas: # eg3d 학습에는 0,0.99 / styleCLIP의 경우 0.95,0.999. 뭐 써야하나
+        - 0.95
+        - 0.999
+    weight_decay: 0
+    loss_type: dir_nce # loss type: 'default', 'dir_nce', 'dir_diff'
+
+prompt:
+    mask_prompt: ["lipstick"]
+    neg_mask_prompt: ["nose"]
+    edit_prompt: ["pink lips"]
+    src_prompt: ["a photo of a person", "a photo of a face", "face of a person", "face image", "face"]

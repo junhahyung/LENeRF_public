@@ -1,0 +1,71 @@
+experiment:
+    debug: False
+    random_seeds: 304
+    trainer: EG3DMaskEditTrainer
+    exp_name: eg3d_ffhq_clipedit
+    log_dir: "%>> /project/dataset/users/liam.1234/localnerf_logs/logs/%(experiment.exp_name)s"
+    generated_dir: "evaluation/generated"
+    resume_folder: ""
+
+    sample_interval: 30
+    model_save_interval: 2000
+
+wandb:
+    entity: 'lenerf'
+    wandb_run_name: 'default'
+
+
+model:
+    generator:
+        model_type: ffhq512-128
+        
+        ## Mixing options
+        mix_layers: 'first' # 'first' 'last' 'both'
+
+    masknet:
+        class_name: "training.clipedit.masknet.Mask_mlp"
+        hidden_dim: 256
+        thres: 0.7                                               # Masknet threshold during eval mode (mask = mask > thres)
+    mapper:
+        ## VanillaMapper
+        #===============#
+        class_name: "training.clipedit.mapper.VanillaMapper"
+        num_layers: 4
+        hidden_dim: 512
+        #===============#
+
+        ## StyleCLIP LevelsMapper
+        #===============#
+        #class_name: "training.clipedit.mapper.LevelsMapper"
+        #num_layers: 4
+        #no_coarse_mapper: False
+        #no_medium_mapper: False
+        #no_fine_mapper: False
+        #===============#
+
+dataset:
+    class_name: "training.dataset.LabelOnlyDataset"
+    path: "/project/dataset/users/liam.1234/lenerf/dataset.json"
+lambda:
+    lpips_lambda: 0.            # turn off for debugging
+    mask_lambda: 0.5
+    ws_delta_lambda: 0.5
+    ws_reg_lambda: 0.0005
+    arcface_lambda: 0.001         
+    clip_augmentation_num: 4    # how many times to augment?
+    sim_scale: 1                # following styleclip. 근데 맞나??
+
+training:
+    max_step: 50000
+    batch_size: 4
+    multiview_num: 4
+    n_workers: 16
+    lr: 0.0003
+    betas: # eg3d 학습에는 0,0.99 / styleCLIP의 경우 0.95,0.999. 뭐 써야하나
+        - 0.95
+        - 0.999
+    weight_decay: 0
+
+prompt:
+    mask_prompt: ["eyes"]
+    edit_prompt: ["a person with eyes closed"]
