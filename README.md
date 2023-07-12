@@ -24,3 +24,13 @@ Make a custom config file, and set `--config-path` in the `clipedit.sh` file, an
 bash clipedit.sh
 ```
 
+## BibTeX
+```
+@inproceedings{hyung2023local,
+  title     =   {Local 3D Editing via 3D Distillation of CLIP Knowledge},
+  author    =   {Hyung, Junha and Hwang, Sungwon and Kim, Daejin and Lee, Hyunji and Choo, Jaegul},
+  booktitle =   {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages     =   {12674--12684},
+  year      =   {2023}
+}
+```
