@@ -1,4 +1,10 @@
-# LENeRF_public
+# LENeRF_public (CVPR'23)
+
+project page: [Link](https://lenerf.github.io/)
+arxiv: [Link](https://arxiv.org/abs/2306.12570)
+
+
+
 
 Our codebase is borrowed from [EG3D](https://github.com/NVlabs/eg3d).
 
